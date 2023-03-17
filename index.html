@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CONNECT-O</title>
+    <style>
+    body {
+        font-family: Gibson, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100%;
+
+    }
+    .correct { color: green; }
+    .incorrect { color: red; }
+    #game, #questions, #connection-guess-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    input[type="text"], button {
+        margin: 0px;
+        font-size: 15px;
+        padding: 5px 10px;
+        border-radius: 3px;
+    }
+    button {
+        background-color: #6c5ce7;
+        color: #ffffff;
+        border: none;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #9077d6;
+    }
+    #instructions, #game, #congratulations {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 600px;
+        box-sizing: border-box;
+    }
+    h1, h2, h3 {
+        color: #6c5ce7;
+    }
+    p {
+        color: #333333;
+    }
+    input[type="text"] {
+        border: 1px solid #6c5ce7;
+    }
+    .answer-result.correct {
+        color: #50d890;
+    }
+    .answer-result.incorrect {
+        color: #ff5e5e;
+    }
+    @media (max-width: 600px) {
+        body {
+            font-size: 20px;
+            padding: 20px;
+        }
+        input[type="text"], button {
+            margin: 3px;
+        }
+        h1 {
+            font-size: 24px;
+        }
+        p {
+            font-size: 20px;
+        }
+    }
+    #questions {
+    margin-bottom: 40px; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    }
+
+.question {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+.question p {
+    width: 100%;
+    text-align: center;
+}
+
+button.skip-question {
+    margin-top: 10px;
+}
+
+#submit-connection-guess {
+    margin-top: 10px;
+}
+
+
+
+</style>
+
+
+
+</head>
+<body>
+    <div id="instructions">
+        <p>Welcome to CONNECT-O!</p>
+        <p>Answer questions and find the connection between the answers to win the game.</p>
+        <button id="proceed-to-game">Proceed to Game</button>
+    </div>
+
+    <div id="game" style="display: none;">
+        <div id="questions"></div>
+        <div id="connection-guess-wrapper">
+            <input type="text" id="connection-guess" placeholder="Guess the connection">
+            <button id="submit-connection-guess">Submit</button>
+            <span id="connection-result"></span>
+        </div>
+    </div>
+
+    <div id="congratulations" style="display: none;">
+        <h2>Congratulations!</h2>
+        <p>You guessed the connection correctly!</p>
+        <p>Your score: <span id="score"></span></p>
+        <button id="share-score">Share Your Score</button>
+    </div>
+
+<script>
+    (function() {
+        let dailyData = {
+            questions: [
+                "Question 4rg grwg ergerg ergreg ergreg ergreg ergreg erger gergerg ergreg erger greg regerg  1 text",
+                "Question  ergerg erger greg erger gerg erger gerger ger g2 text",
+                "Question 3 text",
+                "Question 4rg grwg ergerg ergreg ergreg ergreg ergreg erger gergerg ergreg erger greg regerg  1 text",
+                "Question  ergerg erger greg erger gerg erger gerger ger g2 text",
+                "Question 3 text"
+            ],
+            answers: [
+                "1",
+                "2",
+                "1",
+                "2",
+                "3"
+            ],
+            connection: "Sample Connection"
+        };
+
+        let questionNumber = 1;
+
+        document.getElementById("proceed-to-game").addEventListener("click", async () => {
+            document.getElementById("instructions").style.display = "none";
+            document.getElementById("game").style.display = "block";
+
+            // Fetch daily quiz data from the back-end
+            // const response = await fetch("/daily-data");
+            // dailyData = await response.json();
+            showNextQuestion();
+        });
+      
+
+       function showNextQuestion() {
+    if (questionNumber > dailyData.questions.length) return;
+
+    const questionDiv = document.createElement("div");
+    questionDiv.classList.add("question");
+    questionDiv.innerHTML = `
+        <p>Question ${questionNumber}: ${dailyData.questions[questionNumber - 1]}</p>
+        <input type="text" class="answer-input">
+        <button class="skip-question" ${questionNumber === dailyData.questions.length ? "style='display: none;'" : ""}>Skip Question</button>
+        <span class="answer-result"></span>
+    `;
+    questionDiv.querySelector(".skip-question").addEventListener("click", skipQuestion);
+    questionDiv.querySelector(".answer-input").addEventListener("change", checkAnswer);
+    document.getElementById("questions").appendChild(questionDiv);
+}
+
+
+
+        function skipQuestion() {
+            questionNumber++;
+            showNextQuestion();
+        }
+
+                function checkAnswer(event) {
+            const answerInput = event.target;
+            const questionDiv = answerInput.parentElement;
+            const answer = answerInput.value.trim();
+            const answerResult = questionDiv.querySelector(".answer-result");
+
+            if (answer === "") {
+                answerResult.textContent = "";
+                return;
+            }
+
+            if (answer.toLowerCase() === dailyData.answers[questionNumber - 1].toLowerCase()) {
+                answerResult.textContent = "✓";
+                answerResult.className = "correct";
+            } else {
+                answerResult.textContent = "✗";
+                answerResult.className = "incorrect";
+            }
+
+            questionNumber++;
+            showNextQuestion();
+        }
+
+        document.getElementById("submit-connection-guess").addEventListener("click", () => {
+            const connectionGuess = document.getElementById("connection-guess").value.trim();
+            const connectionResult = document.getElementById("connection-result");
+
+            if (connectionGuess.toLowerCase() === dailyData.connection.toLowerCase()) {
+                connectionResult.textContent = "Correct!";
+                connectionResult.className = "correct";
+                document.getElementById("game").style.display = "none";
+                document.getElementById("congratulations").style.display = "block";
+                document.getElementById("score").textContent = dailyData.questions.length - questionNumber + 1;
+            } else {
+                connectionResult.textContent = "Incorrect!";
+                connectionResult.className = "incorrect";
+            }
+        });
+
+        document.getElementById("share-score").addEventListener("click", () => {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Daily Connection Game',
+                    text: `I scored ${document.getElementById("score").textContent} points in the Connect-O!`,
+                    url: window.location.href
+                }).then(() => {
+                    console.log('Thanks for sharing!');
+                })
+                .catch(console.error);
+            } else {
+                alert("Sharing is not supported on your device.");
+            }
+        });
+
+    })();
+</script>
+</body>
+</html>
