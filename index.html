@@ -111,13 +111,17 @@ button.skip-question {
     margin-top: 10px;
 }
 
+
 #congratulations {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 80%;
-    min-height: 100%;
     flex-direction: column;
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+    margin: 0 auto;
 }
 
 
@@ -168,9 +172,11 @@ body {
         <div id="congratulations" style="display: none;">
             <h2>Congratulations!</h2>
             <p>You guessed the connection correctly!</p>
-            <p>See you tomorrow for the next game :)</p>
-            <p>Your score: <span id="score"></span></p>
-            <button id="share-score">Share Your Score</button>
+            <h2>Your score: <span id="score"></span></h2>
+                <!-- Go to www.addthis.com/dashboard to customize your tools -->
+                <div class="addthis_inline_share_toolbox"></div>
+            
+            <p>Don't forget to share you score!<br>See you tomorrow for the next game :)</p>
         </div>
     </div>
 
@@ -302,34 +308,13 @@ function checkAnswer(event) {
     }
 });
 
-        document.getElementById("share-score").addEventListener("click", () => {
-    const score = document.getElementById("score").textContent;
-    const shareText = `I scored ${score} points in the Connect-O!`;
 
-    // Create a share link with the score and game URL
-    const url = encodeURIComponent(window.location.href);
-    const text = encodeURIComponent(`${shareText} ${url}`);
-    const shareLink = `mailto:?subject=${text}&body=${text}`;
-
-    if (navigator.share) {
-        // Use the Web Share API if available
-        navigator.share({
-            title: 'Connect-o',
-            text: shareText,
-            url: window.location.href
-        }).then(() => {
-            console.log('Thanks for sharing!');
-        })
-        .catch(console.error);
-    } else {
-        // Prompt the user to copy the share link to their clipboard
-        const copyPrompt = `Copy this link to share your score: ${shareLink}`;
-        prompt(copyPrompt, shareLink);
-    }
-});
 
 
     })();
 </script>
+<!-- Go to www.addthis.com/dashboard to customize your tools -->
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-64154ead8dbe3421"></script>
+
 </body>
 </html>
