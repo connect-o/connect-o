@@ -13,7 +13,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        min-height: 100%;
+        min-height: 100vh;
 
     }
     .correct { color: green; }
@@ -63,18 +63,20 @@
     }
     @media (max-width: 600px) {
         body {
-            font-size: 20px;
+            font-size: 30px;
             padding: 20px;
         }
         input[type="text"], button {
             margin: 3px;
         }
         h1 {
-            font-size: 24px;
+            font-size: 34px;
         }
+        
         p {
-            font-size: 20px;
+            font-size: 30px;
         }
+        
     }
     #questions {
     margin-bottom: 40px; 
@@ -83,8 +85,9 @@
     align-items: center;
     width: 100%;
     }
-
-.question {
+    
+    
+.question p {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -105,6 +108,33 @@ button.skip-question {
     margin-top: 10px;
 }
 
+#congratulations {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100%;
+    flex-direction: column;
+}
+
+
+body {
+    /* ... other styles ... */
+    background-image: url('https://static.wixstatic.com/media/06cc25_8354ac636db0462e825f12290533a519~mv2.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#top-image {
+            width: 300px;
+        }
 
 
 </style>
@@ -113,26 +143,30 @@ button.skip-question {
 
 </head>
 <body>
-    <div id="instructions">
-        <p>Welcome to CONNECT-O!</p>
-        <p>Answer questions and find the connection between the answers to win the game.</p>
-        <button id="proceed-to-game">Proceed to Game</button>
-    </div>
-
-    <div id="game" style="display: none;">
-        <div id="questions"></div>
-        <div id="connection-guess-wrapper">
-            <input type="text" id="connection-guess" placeholder="Guess the connection">
-            <button id="submit-connection-guess">Submit</button>
-            <span id="connection-result"></span>
+    <div id="container">
+        <img src="https://static.wixstatic.com/media/06cc25_07623e329efd4387a5c53f5cce0367cd~mv2.png" alt="Top Image" id="top-image">
+        
+        <div id="instructions">
+            <p>Welcome to CONNECT-O!</p>
+            <p>Answer questions and find the connection between the answers to win the game.</p>
+            <button id="proceed-to-game">Proceed to Game</button>
         </div>
-    </div>
 
-    <div id="congratulations" style="display: none;">
-        <h2>Congratulations!</h2>
-        <p>You guessed the connection correctly!</p>
-        <p>Your score: <span id="score"></span></p>
-        <button id="share-score">Share Your Score</button>
+        <div id="game" style="display: none;">
+            <div id="questions"></div>
+            <div id="connection-guess-wrapper">
+                <input type="text" id="connection-guess" placeholder="Guess the connection">
+                <button id="submit-connection-guess">Submit</button>
+                <span id="connection-result"></span>
+            </div>
+        </div>
+
+        <div id="congratulations" style="display: none;">
+            <h2>Congratulations!</h2>
+            <p>You guessed the connection correctly!</p>
+            <p>Your score: <span id="score"></span></p>
+            <button id="share-score">Share Your Score</button>
+        </div>
     </div>
 
 <script>
@@ -241,19 +275,40 @@ button.skip-question {
         });
 
         document.getElementById("share-score").addEventListener("click", () => {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Daily Connection Game',
-                    text: `I scored ${document.getElementById("score").textContent} points in the Connect-O!`,
-                    url: window.location.href
-                }).then(() => {
-                    console.log('Thanks for sharing!');
-                })
-                .catch(console.error);
-            } else {
-                alert("Sharing is not supported on your device.");
-            }
-        });
+    const score = document.getElementById("score").textContent;
+    const shareText = `I scored ${score} points in the Connect-O!`;
+
+    if (navigator.share) {
+        navigator.share({
+            title: 'Connect-o',
+            text: shareText,
+            url: window.location.href
+        }).then(() => {
+            console.log('Thanks for sharing!');
+        })
+        .catch(console.error);
+    } else {
+        // Fallback: Create a Twitter share link
+        const url = encodeURIComponent(window.location.href);
+        const text = encodeURIComponent(shareText);
+        const twitterUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
+        
+        // Fallback: Create a Facebook share link
+        const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+        
+        const fallbackOptions = `Choose a platform:\n1. Twitter\n2. Facebook`;
+        const selectedOption = prompt(fallbackOptions, "1");
+        
+        if (selectedOption === "1") {
+            window.open(twitterUrl, '_blank');
+        } else if (selectedOption === "2") {
+            window.open(facebookUrl, '_blank');
+        } else {
+            alert("Invalid option selected. Please try again.");
+        }
+    }
+});
+
 
     })();
 </script>
