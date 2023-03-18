@@ -179,8 +179,8 @@ body {
             <h2>Congratulations!</h2>
             <p>You guessed the connection correctly!</p>
             <h2>Your score: <span id="score"></span></h2>
-                <!-- Go to www.addthis.com/dashboard to customize your tools -->
-                <div class="addthis_inline_share_toolbox"></div>
+               <button id="share-button">Share Your Score</button>
+
             
             <p>Don't forget to share your score!<br>See you tomorrow for the next game :)</p>
             <p>Contact: hello@connect-o.com</p>
@@ -316,12 +316,36 @@ function checkAnswer(event) {
 });
 
 
+function shareScore() {
+    const score = document.getElementById("score").textContent;
+    const gameURL = "http://connect-o.com/";
+    const shareText = `I scored ${score} points in Connect-O! Can you beat my score? Play now: ${gameURL}`;
+
+    if (navigator.share) {
+        // For mobile devices
+        navigator.share({
+            title: "Connect-O",
+            text: shareText,
+            url: gameURL,
+        }).catch((error) => console.error("Error sharing:", error));
+    } else {
+        // For desktop browsers
+        const tempInput = document.createElement("input");
+        tempInput.value = shareText;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+        alert("Your score and game link have been copied to the clipboard!");
+    }
+}
+
+document.getElementById("share-button").addEventListener("click", shareScore);
 
 
     })();
 </script>
-<!-- Go to www.addthis.com/dashboard to customize your tools -->
-<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-64154ead8dbe3421"></script>
+
 
 </body>
 </html>
