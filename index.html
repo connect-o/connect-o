@@ -306,7 +306,13 @@ function checkAnswer(event) {
     const score = document.getElementById("score").textContent;
     const shareText = `I scored ${score} points in the Connect-O!`;
 
+    // Create a share link with the score and game URL
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(`${shareText} ${url}`);
+    const shareLink = `mailto:?subject=${text}&body=${text}`;
+
     if (navigator.share) {
+        // Use the Web Share API if available
         navigator.share({
             title: 'Connect-o',
             text: shareText,
@@ -316,28 +322,10 @@ function checkAnswer(event) {
         })
         .catch(console.error);
     } else {
-        // Fallback: Create a Twitter share link
-        const url = encodeURIComponent(window.location.href);
-        const text = encodeURIComponent(shareText);
-        const twitterUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
-        
-        // Fallback: Create a Facebook share link
-        const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
-        
-        const fallbackOptions = `Choose a platform:\n1. Twitter\n2. Facebook`;
-        const selectedOption = prompt(fallbackOptions, "1");
-        
-        if (selectedOption === "1") {
-            window.open(twitterUrl, '_blank');
-        } else if (selectedOption === "2") {
-            window.open(facebookUrl, '_blank');
-        } else {
-            alert("Invalid option selected. Please try again.");
-        }
+        // Prompt the user to copy the share link to their clipboard
+        const copyPrompt = `Copy this link to share your score: ${shareLink}`;
+        prompt(copyPrompt, shareLink);
     }
-
-
-
 });
 
 
