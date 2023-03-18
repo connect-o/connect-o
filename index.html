@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CONNECT-O</title>
     <style>
     body {
-        font-family: Gibson, sans-serif;
-        margin: 0;
+        font-family: 'Roboto', sans-serif;
+        margin: 10%;
         padding: 0;
         display: flex;
         justify-content: center;
@@ -40,6 +41,7 @@
     }
     #instructions, #game, #congratulations {
         display: flex;
+       
         flex-direction: column;
         align-items: center;
         width: 100%;
@@ -63,18 +65,19 @@
     }
     @media (max-width: 600px) {
         body {
-            font-size: 30px;
+            font-size: 25px;
             padding: 20px;
         }
         input[type="text"], button {
             margin: 3px;
         }
         h1 {
-            font-size: 34px;
+            font-size: 25px;
+            font-weight: normal;
         }
         
         p {
-            font-size: 30px;
+            font-size: 25px;
         }
         
     }
@@ -112,7 +115,7 @@ button.skip-question {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
+    width: 80%;
     min-height: 100%;
     flex-direction: column;
 }
@@ -149,6 +152,7 @@ body {
         <div id="instructions">
             <p>Welcome to CONNECT-O!</p>
             <p>Answer questions and find the connection between the answers to win the game.</p>
+            <p>The sooner you guess the connection, the more points you'll get!</p>
             <button id="proceed-to-game">Proceed to Game</button>
         </div>
 
@@ -164,6 +168,7 @@ body {
         <div id="congratulations" style="display: none;">
             <h2>Congratulations!</h2>
             <p>You guessed the connection correctly!</p>
+            <p>See you tomorrow for the next game :)</p>
             <p>Your score: <span id="score"></span></p>
             <button id="share-score">Share Your Score</button>
         </div>
@@ -173,30 +178,35 @@ body {
     (function() {
         let dailyData = {
             questions: [
-                "Who had a hit 1998 album entitled Voice of an Angel?",
-                "The female of which triangular-headed insect devours the male after mating?",
-                "Which Liverpool band had hits in the 1980s with Ideal World and Harvest for the World?",
-                "What was the name of the Matrix character played by Carrie Ann Moss?",
-                "What is the name given to a non-alcoholic cocktail containing ginger beer, grenadine, crushed ice and cherries?",
-                "Which Dusty Springfield hit featured in the Pulp Fiction soundtrack?",
-                "Who made up the original Queen line up along with Freddie Mercury, Brian May and Roger Taylor?",
-                "Which chess piece only has access to half the squares on the board?",
-                "Who was Rocky’s opponent in the first two films?"
+                 "What nationality is the composer Ludwig van Beethoven?",
+                 "What animal is often associated with the sign of Taurus in astrology?",
+                 "Which monarch's reign is known as the Restoration period in England?",
+                 "What is the stage name of the rapper and singer Armando Christian Pérez?",
+                 "What is the period of time, just after sunrise or just before sunset, referred to in photography? ",
+                 "What is the name of the easternmost province of Canada?",
+                 "What is a random, thoughtless drawing called?",
+                 "Which profession involves caring for and herding ewes and rams?",
+                 "What is the largest state in Mexico by area?",
+                 "What word describes a low-pitch and slightly hoarse voice?"
+
               
             ],
             answers: [
-                "Charlotte Church",
-                "Praying Mantis",
-                "The Christians",
-                "Trinity",
-                "Shirley Temple",
-                "Son of a Preacherman",
-                "John Deacon",
-                "Bishop",
-                "Apollo Creed"
+                ["German"],
+                ["Bull"],
+                ["King Charles II", "King Charles", "Charles II"],
+                ["Pitbull", "Pitbul"],
+                ["Golden hour", "Golden", "The golden hour"],
+                ["Newfoundland and Labrador", "Newfoundland", "Labrador"],
+                ["Doodle", "Doodles"],
+                ["Shepherd", "sheppard", "sheppherd"],
+                ["Chihuahua", "chihuaua", "chiwawa"],
+                ["Husky"]
+
+                
         
             ],
-            connection: "religion"
+            connection: ["Dog", "Dogs", "Dog breeds", "Breeds of dog", "dog breed", "breed of dogs"]
         };
 
         let questionNumber = 1;
@@ -236,43 +246,54 @@ body {
         }
 
                 function checkAnswer(event) {
-            const answerInput = event.target;
-            const questionDiv = answerInput.parentElement;
-            const answer = answerInput.value.trim();
-            const answerResult = questionDiv.querySelector(".answer-result");
+    const answerInput = event.target;
+    const questionDiv = answerInput.parentElement;
+    const answer = answerInput.value.trim();
+    const answerResult = questionDiv.querySelector(".answer-result");
 
-            if (answer === "") {
-                answerResult.textContent = "";
-                return;
-            }
+    if (answer === "") {
+        answerResult.textContent = "";
+        return;
+    }
 
-            if (answer.toLowerCase() === dailyData.answers[questionNumber - 1].toLowerCase()) {
-                answerResult.textContent = "✓";
-                answerResult.className = "correct";
-            } else {
-                answerResult.textContent = "✗";
-                answerResult.className = "incorrect";
-            }
+    const correctAnswers = dailyData.answers[questionNumber - 1];
+    const isAnswerCorrect = correctAnswers.some(
+        (correctAnswer) => correctAnswer.toLowerCase() === answer.toLowerCase()
+    );
 
-            questionNumber++;
-            showNextQuestion();
-        }
+    if (isAnswerCorrect) {
+        answerResult.textContent = "✓";
+        answerResult.className = "correct";
+    } else {
+        answerResult.textContent = "✗";
+        answerResult.className = "incorrect";
+    }
+
+    questionNumber++;
+    showNextQuestion();
+}
+
 
         document.getElementById("submit-connection-guess").addEventListener("click", () => {
-            const connectionGuess = document.getElementById("connection-guess").value.trim();
-            const connectionResult = document.getElementById("connection-result");
+    const connectionGuess = document.getElementById("connection-guess").value.trim();
+    const connectionResult = document.getElementById("connection-result");
 
-            if (connectionGuess.toLowerCase() === dailyData.connection.toLowerCase()) {
-                connectionResult.textContent = "Correct!";
-                connectionResult.className = "correct";
-                document.getElementById("game").style.display = "none";
-                document.getElementById("congratulations").style.display = "block";
-                document.getElementById("score").textContent = dailyData.questions.length - questionNumber + 1;
-            } else {
-                connectionResult.textContent = "Incorrect!";
-                connectionResult.className = "incorrect";
-            }
-        });
+    const isConnectionCorrect = dailyData.connection.some(
+        (correctConnection) => correctConnection.toLowerCase() === connectionGuess.toLowerCase()
+    );
+
+    if (isConnectionCorrect) {
+        connectionResult.textContent = "Correct!";
+        connectionResult.className = "correct";
+        document.getElementById("game").style.display = "none";
+        document.getElementById("congratulations").style.display = "block";
+        document.getElementById("score").textContent = dailyData.questions.length - questionNumber + 1;
+    } else {
+        connectionResult.textContent = "Incorrect!";
+        connectionResult.className = "incorrect";
+    }
+});
+
 
         document.getElementById("share-score").addEventListener("click", () => {
     const score = document.getElementById("score").textContent;
