@@ -11,7 +11,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CONNECT-O</title>
+    <title>Connect-O</title>
     <style>
     body {
         font-family: 'Roboto', sans-serif;
@@ -113,6 +113,10 @@ button.skip-question {
     margin-top: 10px;
 }
 
+small {
+  font-size: 12px;
+}
+
 #submit-connection-guess {
     margin-top: 10px;
 }
@@ -149,6 +153,10 @@ body {
             width: 300px;
         }
 
+.incorrect-input {
+    border: 2px solid #ff5e5e;
+    background-color: #ffe4e4;
+}
 
 </style>
 
@@ -172,6 +180,7 @@ body {
                 <input type="text" id="connection-guess" placeholder="Guess the connection">
                 <button id="submit-connection-guess">Submit</button>
                 <span id="connection-result"></span>
+                <p><small>Pssst!... You can guess the connection multiple times.</small></p>
             </div>
         </div>
 
@@ -183,7 +192,7 @@ body {
 
             
             <p>Don't forget to share your score!<br>See you tomorrow for the next game :)</p>
-            <p>Contact: hello@connect-o.com</p>
+            <p><small>Contact: hello@connect-o.com</small></p>
         </div>
     </div>
 
@@ -251,12 +260,14 @@ body {
         }
 
         function clearIncorrectResult(event) {
-            const inputField = event.target;
-            const questionDiv = inputField.parentElement;
-            const answerResult = questionDiv.querySelector(".answer-result");
+    const inputField = event.target;
+    const questionDiv = inputField.parentElement;
+    const answerResult = questionDiv.querySelector(".answer-result");
 
-            answerResult.textContent = "";
-        }
+    answerResult.textContent = "";
+    inputField.classList.remove("incorrect-input");
+}
+
 
         function skipQuestion() {
             questionNumber++;
@@ -289,8 +300,21 @@ function checkAnswer(event) {
         submitButton.style.display = "none";
         questionNumber++;
         showNextQuestion();
+    } else {
+        answerInput.style.borderColor = "red";
     }
 }
+
+function clearIncorrectResult(event) {
+    const inputField = event.target;
+    const questionDiv = inputField.parentElement;
+    const answerResult = questionDiv.querySelector(".answer-result");
+
+    answerResult.textContent = "";
+    inputField.style.borderColor = "#6c5ce7"; // Reset the border color
+}
+
+
 
 
 
